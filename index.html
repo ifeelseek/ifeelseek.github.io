@@ -31,6 +31,8 @@
 		<button id="findReplace" class="button">Find-replace text</button>
 		<button id="findReplaceRegex" class="button">Find-replace regex</button>
 		<button id="parseAdvertiserButton" class="button">Parse Advertiser</button>
+		<button id="parseEmailsButton" class="button">Parse Emails</button>
+		
 	</div>
 
     <div id="error" class="error"></div>
@@ -224,6 +226,7 @@
 			
 			if ((columns[1] == "jobText")) {
 		  		columns.push("jobTextParsed");
+		  		columns.push("luckyButton");
 		  	}
 			
 			var numberHeaders = columns.length;
@@ -262,11 +265,27 @@
 						tableHTML = tableHTML + "<td><a href=\"https://www.seek.co.nz/job/" + thisRowCell + "\" target=_blank>" + thisRowCell + "</a></td>" + "\n";
 					} else if ((currentRowCell == 1) && (columns[1] == "jobText")) {
 						tableHTML = tableHTML + "<td onclick=\"openText(event, " + currentRow + ")\"><div style=\"width:500px;overflow:scroll\">" + thisRowCell + "</div></td>" + "\n";
-					} else if ((currentRowCell == (numberRowCells - 1)) && (columns[numberRowCells - 1] == "jobTextParsed")) {
+					} else if ((currentRowCell == (numberRowCells - 2)) && (columns[numberRowCells - 2] == "jobTextParsed")) {
 					
 						thisRowCell = thisRowArray[currentRowCell - 1];
 					
 						tableHTML = tableHTML + "<td><div id=\"parsedRow" + currentRow + "\" style=\"width:500px;overflow:scroll\">" + thisRowCell + "</div></td>" + "\n";
+						
+					} else if ((currentRowCell == (numberRowCells - 1)) && (columns[numberRowCells - 1] == "luckyButton")) {
+					
+						tableHTML = tableHTML + "<td>";
+						
+						//tableHTML = tableHTML + "<form target=\"_blank\" action=\"https://google.com/search\">";
+						//tableHTML = tableHTML + "<input type=\"text\" id=\"lucky" + currentRow + "\" name=\"q\" class=\"box\" style=\"display:none\"><br><div>";
+						//tableHTML = tableHTML + "<input type=\"submit\" name=\"btnI\" value=\"Lucky\">";
+						//tableHTML = tableHTML + "</div></form>";
+						
+						
+						tableHTML = tableHTML + "<a href=\"\" target=_blank id=\"lucky" + currentRow + "\">" + "Search" + "</a>";
+						
+						
+						tableHTML = tableHTML + "</td>" + "\n";
+						
 					} else {
 						tableHTML = tableHTML + "<td>" + thisRowCell + "</td>" + "\n";
 					}
@@ -413,12 +432,15 @@
 			for (var currentRow = 0; currentRow < numberRows; currentRow++)
 			{
 				var thisRowParsedTextDivId = "parsedRow" + currentRow;
+				var thisRowLuckyId = "lucky" + currentRow;
 				
 				var thisRowParsedText = document.getElementById(thisRowParsedTextDivId).innerHTML;
 				
 				thisRowParsedText = replaceChars(thisRowParsedText, findText, replaceText);
 				
 				document.getElementById(thisRowParsedTextDivId).innerHTML = thisRowParsedText;
+				//document.getElementById(thisRowLuckyId).value = thisRowParsedText;
+				document.getElementById(thisRowLuckyId).href = "https://duckduckgo.com/?q=\\" + thisRowParsedText;
 				
 			} // end for every row
 			
@@ -434,6 +456,7 @@
 			for (var currentRow = 0; currentRow < numberRows; currentRow++)
 			{
 				var thisRowParsedTextDivId = "parsedRow" + currentRow;
+				var thisRowLuckyId = "lucky" + currentRow;
 				
 				var thisRowParsedText = document.getElementById(thisRowParsedTextDivId).innerHTML;
 				
@@ -443,6 +466,8 @@
 				thisRowParsedText = thisRowParsedText.replace(findRegex, replaceText);
 				
 				document.getElementById(thisRowParsedTextDivId).innerHTML = thisRowParsedText;
+				//document.getElementById(thisRowLuckyId).value = thisRowParsedText;
+				document.getElementById(thisRowLuckyId).href = "https://duckduckgo.com/?q=\\" + thisRowParsedText;
 				
 			} // end for every row
 			
@@ -476,6 +501,30 @@
 		} // end function findReplaceRegex
 		var parseAdvertiserButton = document.getElementById("parseAdvertiserButton");
 		parseAdvertiserButton.addEventListener("click", parseAdvertiser, true);
+		
+		function parseEmails()
+		{
+			document.getElementById("findTextArea").value = ".* (.*)@";
+			document.getElementById("replaceTextArea").value = "$1@";
+			findReplaceRegexButton.click();
+			document.getElementById("findTextArea").value = "^[^A-Za-z]";
+			document.getElementById("replaceTextArea").value = "";
+			findReplaceRegexButton.click();
+			document.getElementById("findTextArea").value = "^[^A-Za-z]";
+			document.getElementById("replaceTextArea").value = "";
+			findReplaceRegexButton.click();
+			document.getElementById("findTextArea").value = "^[^A-Za-z]";
+			document.getElementById("replaceTextArea").value = "";
+			findReplaceRegexButton.click();
+
+
+			document.getElementById("findTextArea").value = "§.*";
+			document.getElementById("replaceTextArea").value = "";
+			findReplaceRegexButton.click();
+			
+		} // end function parseEmails
+		var parseEmailsButton = document.getElementById("parseEmailsButton");
+		parseEmailsButton.addEventListener("click", parseEmails, true);
 		
   		function countWordsButtonClicked()
   		{
