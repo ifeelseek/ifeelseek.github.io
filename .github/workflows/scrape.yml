@@ -29,7 +29,8 @@ jobs:
         for thisFile in $seekPagesFiles
         do
             filename=`basename "$thisFile" | sed 's/.html//g'`;
-            #fileText=`cat "$thisFile"`;
+            fileText=`cat "$thisFile"`;
+            fileText=`echo "$fileText" | sed 's/<article/\n<article/g'`
             #fileText=`echo "$fileText" | perl -pe 's/<article/\n<article/g'`
             #jobIds=`echo "$fileText" | grep "data-job-id="`
             #while read -r thisJobId; do
