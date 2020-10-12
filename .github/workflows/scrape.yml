@@ -15,6 +15,7 @@ jobs:
     - name: Fetch latest data
       run: |-
         thisClassification="information-communication-technology"
+        mkdir -p "NZ/information-communication-technology/Pages/"
         for ((currentPage=1; currentPage<=1000; currentPage++)); do
             thisHtml=`curl -sL "https://www.seek.co.nz/jobs-in-$thisClassification?page=$currentPage"`;
             echo "$thisHtml" > "NZ/information-communication-technology/Pages/$thisClassification-$currentPage.html"
