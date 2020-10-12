@@ -1,0 +1,33 @@
+name: Scrape latest data
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron:  '8,28,48 * * * *'
+
+jobs:
+  scheduled:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out this repo
+      uses: actions/checkout@v2
+    - name: Fetch latest data
+      run: |-
+        thisClassification="information-communication-technology"
+        for ((currentPage=1; currentPage<=1000; currentPage++)); do
+            thisHtml=`curl -sL "https://www.seek.co.nz/jobs-in-$thisClassification?page=$currentPage"`;
+            echo "$thisHtml" > "NZ/information-communication-technology/Pages/$thisClassification-$currentPage.html"
+            if [[ $thisHtml == *"Sorry, we couldn’t find anything."* ]]; then
+                currentPage=1001;
+            fi
+        done
+    - name: Commit and push if it changed
+      run: |-
+        git config user.name "Automated"
+        git config user.email "actions@users.noreply.github.com"
+        git add -A
+        timestamp=$(date -u)
+        git commit -m "Latest data: ${timestamp}" || exit 0
+        git push
+
