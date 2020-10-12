@@ -23,6 +23,24 @@ jobs:
                 currentPage=1001;
             fi
         done
+        mkdir -p "NZ/information-communication-technology/Jobs/"
+        echo -n "" > "NZ/information-communication-technology/jobIdsNew.txt"
+        seekPagesFiles="NZ/information-communication-technology/Pages/*.html";
+        for thisFile in $seekPagesFiles
+        do
+            filename=`basename "$thisFile" | sed 's/.html//g'`;
+            fileText=`cat "$thisFile"`;
+            #fileText=`echo "$fileText" | sed 's/<article/\n<article/g'`
+            #fileText=`echo "$fileText" | perl -pe 's/<article/\n<article/g'`
+            jobIds=`echo "$fileText" | grep "data-job-id="`
+            while read -r thisJobId; do
+            #    thisJobId=`echo "$thisJobId" | sed 's/.*data-job-id=\"//g' | sed 's/\".*//g'`
+            #    if [ ! -f "NZ/information-communication-technology/Jobs/$thisJobId.html" ]; then
+            #        echo "curl -sL \"https://www.seek.co.nz/job/$thisJobId\" > \"Jobs/$thisJobId.html\"" >> "downloadSeekJobs.sh"
+                    echo "$thisJobId" >> "NZ/information-communication-technology/jobIdsNew.txt"
+            #    fi
+            done <<< "$jobIds"
+        done
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated"
