@@ -4,7 +4,7 @@ on:
   push:
   workflow_dispatch:
   schedule:
-    - cron:  '6,26,46 * * * *'
+    - cron:  '8,28,48 * * * *'
 
 jobs:
   scheduled:
@@ -14,7 +14,14 @@ jobs:
       uses: actions/checkout@v2
     - name: Fetch latest data
       run: |-
-        curl "https://www.seek.co.nz/jobs-in-information-communication-technology" > ict.html
+        thisClassification="information-communication-technology"
+        for ((currentPage=1; currentPage<=1000; currentPage++)); do
+            thisHtml=`curl -sL "https://www.seek.co.nz/jobs-in-$thisClassification?page=$currentPage"`;
+            echo "$thisHtml" > "NZ/information-communication-technology/Pages/$thisClassification-$currentPage.html"
+            if [[ $thisHtml == *"Sorry, we couldn’t find anything."* ]]; then
+                currentPage=1001;
+            fi
+        done
     - name: Commit and push if it changed
       run: |-
         git config user.name "Automated"
